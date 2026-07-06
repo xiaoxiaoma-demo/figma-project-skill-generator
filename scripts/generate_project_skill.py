@@ -483,12 +483,10 @@ Use this skill to implement Figma designs as project-native code in `{scan.proje
 {bullet_lines(scan.references)}
    - closest existing page/component near the target feature
    - existing assets under the project asset directories
-2. Parse the Figma URL into:
-   - `fileKey`: the value after `/design/` or `/file/`
-   - `nodeId`: the `node-id` query parameter, converted from `18-203` to `18:203` when needed
-3. Use `mcp__Framelink_Figma_MCP.get_figma_data` with `fileKey` and `nodeId` to read the exact node/frame. If the tool is not exposed in the current session, stop and ask the user to enable/restart Figma MCP or provide Figma JSON, screenshots, and exported assets; do not silently use an unspecified fallback.
-4. Extract layout, colors, typography, spacing, radii, shadows, image refs, SVG/icon nodes, and component hierarchy.
-5. Before calling `mcp__Framelink_Figma_MCP.download_figma_images`, confirm the MCP image directory/current working directory is the current project root or otherwise guaranteed to resolve inside this repository. Download required Figma assets into the project asset directory, then verify the files exist inside the project root.
+2. Use Figma MCP on the exact selected node/frame. With F2C MCP Plugin, confirm the target layer is selected in the F2C Chrome extension workflow before calling the tool.
+3. Use `mcp__F2C_MCP.get_code_to_component` to generate high-fidelity reference code for the selected node/frame. Set `framework` to the closest project match (`vue`, `react`, or `html`) and set `style` to `css` unless this project already uses Tailwind-compatible utilities. If the tool is not exposed in the current session, stop and ask the user to enable/restart F2C MCP Plugin or provide Figma JSON, screenshots, and exported assets; do not silently use an unspecified fallback.
+4. Extract layout, colors, typography, spacing, radii, shadows, image refs, SVG/icon nodes, and component hierarchy from the F2C output. Treat generated code as reference unless it exactly matches this project's stack.
+5. If using F2C `localPath`, write only to a project-contained temporary draft directory first, then move verified assets into the project asset directory and confirm the files exist inside the project root.
 6. Implement directly in the project using existing components, tokens, and styling primitives first.
 7. Put pages/components in the detected project directories and respect route/menu ownership boundaries.
 8. Keep changes scoped. Do not touch unrelated dirty files.

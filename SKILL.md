@@ -117,12 +117,11 @@ Keep the generated skill concise. Include only stable project conventions and re
 The generated project skill must instruct future runs to:
 
 - use Figma MCP on the exact selected node/frame before coding
-- parse Figma URLs into `fileKey` and `nodeId`; for GLips/Framelink, call `mcp__Framelink_Figma_MCP.get_figma_data` when available
-- download required Figma assets into the project asset directory
-- for GLips/Framelink image assets, call `mcp__Framelink_Figma_MCP.download_figma_images` when available
+- for F2C MCP Plugin, ask the user to select the exact Figma node/frame in the F2C Chrome extension workflow before calling the tool
+- call `mcp__F2C_MCP.get_code_to_component` when available; set `framework` to the closest project match (`vue`, `react`, or `html`) and set `style` to `css` unless the project already uses Tailwind-compatible utilities
+- if using F2C `localPath`, write only to a project-contained temporary draft directory first, then move verified assets into the project asset directory
 - if Figma MCP tools are not exposed in the current session, stop and ask the user to enable/restart MCP or provide Figma JSON/screenshots/exported assets; do not silently switch to an unspecified fallback
-- before downloading assets, confirm the MCP image root or current working directory is the target project root; otherwise download to a known temporary directory and move/verify files into the project asset directory
-- treat Figma output as design context, not final code style
+- treat F2C generated React/Tailwind/HTML as high-fidelity reference output unless it exactly matches the target project's stack
 - reuse project components and tokens before creating new ones
 - implement directly in the project rather than generating standalone HTML
 - avoid fixed full-canvas scaling such as `scale(1920px design)`
@@ -178,9 +177,9 @@ description: Implement Figma designs directly in this project using its UI frame
 ## Required Workflow
 
 1. Read project guidance and relevant existing code.
-2. Parse the Figma URL into `fileKey` and `nodeId`; use Figma MCP to read the exact node/frame from the provided link.
+2. Use Figma MCP to read or generate from the exact selected node/frame. With F2C MCP Plugin, confirm the target layer is selected in the F2C Chrome extension workflow, then call `mcp__F2C_MCP.get_code_to_component`.
 3. Extract layout, colors, typography, spacing, radii, shadows, images, icons, and component hierarchy.
-4. Confirm Figma MCP asset downloads will land inside the target project; download assets into the project asset directory and verify the files exist there.
+4. If using F2C `localPath`, write generated files/assets to a project-contained temporary draft directory first; move verified assets into the project asset directory and confirm they exist inside the project root.
 5. Implement directly in the project using existing components and tokens.
 6. Apply responsive behavior with project-native patterns.
 7. Run the dev server/build/lint/test commands that fit the change.
