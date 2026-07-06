@@ -1,0 +1,4 @@
+interface:
+  display_name: "Figma Project Skill Generator"
+  short_description: "Scan a project and create Figma skills."
+  default_prompt: "Use $figma-project-skill-generator to scan this repository and create or refresh a project-specific Figma-to-code skill draft."
