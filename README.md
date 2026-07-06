@@ -2,15 +2,19 @@
 
 Language: English | [Chinese](README.zh-CN.md)
 
-Project-local Figma-to-code skill generator for Codex.
+Project-local Figma-to-code workflow generator for AI coding assistants.
 
-This skill scans a JavaScript/TypeScript frontend project and generates a project-specific Codex skill at:
+This repository provides a reusable skill/workflow for AI coding assistants. It scans a JavaScript/TypeScript frontend project and generates a project-specific Figma-to-code workflow file.
+
+Default Codex-compatible output:
 
 ```text
 .codex/skills/figma-to-project/SKILL.md
 ```
 
-The generated project skill helps future Codex runs implement Figma designs directly in the target project using that project's real UI framework, route model, components, assets, responsive rules, and verification commands.
+The generated project workflow helps future AI-agent runs implement Figma designs directly in the target project using that project's real UI framework, route model, components, assets, responsive rules, and verification commands.
+
+Although the default output format is Codex-compatible, the scanner and generated Markdown workflow can be adapted to other AI coding assistants by using `--output` and moving the generated instructions into that assistant's rules, memory, or skill system.
 
 ## What It Solves
 
@@ -25,7 +29,7 @@ When implementing Figma designs, teams usually repeat the same prompt instructio
 - run the right project commands
 - verify with screenshots
 
-This skill turns those repeated instructions into a reusable project-local skill.
+This project turns those repeated instructions into a reusable project-local workflow.
 
 ## Repository Contents
 
@@ -40,7 +44,7 @@ figma-project-skill-generator/
 
 ## Install
 
-Copy this folder into your Codex skills directory:
+Copy this folder into your AI assistant's skills/rules directory. For Codex, use:
 
 ```text
 <codex-home>/skills/figma-project-skill-generator
@@ -53,7 +57,7 @@ Windows: %USERPROFILE%\.codex\skills\figma-project-skill-generator
 macOS/Linux: ~/.codex/skills/figma-project-skill-generator
 ```
 
-Then restart Codex or reload skills if your environment requires it.
+Then restart or reload your assistant's skills/rules if your environment requires it.
 
 ## Daily Usage
 
@@ -80,9 +84,9 @@ cd "<skill-root>"
 python ".\scripts\generate_project_skill.py" "<project-root>" --force
 ```
 
-## Using It Inside Codex
+## Using It Inside An AI Coding Assistant
 
-You can ask Codex:
+You can ask your AI coding assistant. Codex example:
 
 ```text
 Use $figma-project-skill-generator to scan the current repository and create a project-specific Figma-to-code skill.
@@ -159,12 +163,12 @@ The generated skill is a strong draft, not a substitute for project knowledge. F
 
 - Python 3.10+
 - A JavaScript/TypeScript frontend project with `package.json`
-- Codex skill support
+- AI assistant skill/rules support; Codex-compatible by default
 - Optional: Figma MCP configured for future `$figma-to-project` implementation tasks
 
 ## Validation
 
-Validate the skill folder with the Codex skill validation script:
+If you use Codex, validate the skill folder with the Codex skill validation script:
 
 ```powershell
 python "<path-to-skill-creator>\scripts\quick_validate.py" "<skill-root>"

@@ -2,11 +2,11 @@
 
 语言：[English](README.md) | 简体中文
 
-这是一个面向团队复用的 Codex 公共 Skill。它会扫描前端项目的技术栈、UI 框架、路由、组件、资源目录和验证命令，然后在项目内生成专属的 `figma-to-project` Skill。
+这是一个面向团队复用的通用 Figma-to-code 工作流生成器，适用于支持 rules、memory、skills 或类似机制的 AI 编码助手。默认输出格式兼容 Codex。
 
-后续做 Figma 设计稿还原时，Codex 就能直接按当前项目规范生成代码，而不是每次都重复写一大段提示词。
+它会扫描前端项目的技术栈、UI 框架、路由、组件、资源目录和验证命令，然后在项目内生成专属的 Figma-to-code 工作流说明。后续做 Figma 设计稿还原时，AI 编码助手就能直接按当前项目规范生成代码，而不是每次都重复写一大段提示词。
 
-生成路径：
+默认 Codex 兼容输出路径：
 
 ```text
 .codex/skills/figma-to-project/SKILL.md
@@ -14,9 +14,11 @@
 
 生成出来的项目 Skill 会固定该项目的真实规范，例如 UI 组件库、样式方案、页面放置位置、路由/菜单边界、Figma 资源下载目录、响应式要求和截图验证方式。
 
+如果使用的不是 Codex，也可以通过 `--output` 输出 Markdown 草稿，再把生成内容迁移到对应工具的 rules、memory、prompt 或 skill 机制中。
+
 ## 解决什么问题
 
-做 Figma 设计稿落地时，团队通常会反复提醒 Codex：
+做 Figma 设计稿落地时，团队通常会反复提醒 AI 编码助手：
 
 - 先读取项目技术栈
 - 使用项目现有 UI 框架
@@ -27,7 +29,7 @@
 - 运行项目正确的验证命令
 - 用截图检查效果
 
-这个公共 Skill 的作用就是把这些重复提示词沉淀下来：先生成项目专属 Skill，再用项目专属 Skill 做实际页面开发。
+这个公共工作流的作用就是把这些重复提示词沉淀下来：先生成项目专属规范，再用项目专属规范做实际页面开发。
 
 ## 仓库内容
 
@@ -42,7 +44,7 @@ figma-project-skill-generator/
 
 ## 安装
 
-把整个仓库目录复制到你的 Codex skills 目录：
+把整个仓库目录复制到你的 AI 编码助手 skills/rules 目录。Codex 默认位置为：
 
 ```text
 <codex-home>/skills/figma-project-skill-generator
@@ -55,7 +57,7 @@ Windows: %USERPROFILE%\.codex\skills\figma-project-skill-generator
 macOS/Linux: ~/.codex/skills/figma-project-skill-generator
 ```
 
-然后重启 Codex，或按你的环境刷新 skills。
+然后重启或刷新你的 AI 编码助手。
 
 ## 日常使用
 
@@ -85,9 +87,9 @@ cd "<skill-root>"
 python ".\scripts\generate_project_skill.py" "<project-root>" --force
 ```
 
-## 在 Codex 中使用
+## 在 AI 编码助手中使用
 
-可以直接对 Codex 说：
+可以直接对 AI 编码助手说。Codex 示例：
 
 ```text
 使用 $figma-project-skill-generator 扫描当前项目，并生成项目专属 Figma-to-code skill。
@@ -188,12 +190,12 @@ figma-to-project = 按项目规范实现 Figma 页面
 
 - Python 3.10+
 - 带有 `package.json` 的 JavaScript/TypeScript 前端项目
-- Codex skills 支持
+- AI 编码助手支持 rules、memory、skills 或类似机制；默认兼容 Codex skills
 - 可选：实际做 Figma 页面实现时，建议提前配置好 Figma MCP
 
 ## 校验
 
-使用 Codex skill 校验脚本检查：
+如果使用 Codex，可以用 Codex skill 校验脚本检查：
 
 ```powershell
 python "<path-to-skill-creator>\scripts\quick_validate.py" "<skill-root>"

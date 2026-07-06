@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate a project-local Figma-to-code Codex skill from repository signals."""
+"""Generate a project-local Figma-to-code skill/workflow from repository signals."""
 
 from __future__ import annotations
 

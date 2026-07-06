@@ -1,11 +1,11 @@
 ---
 name: figma-project-skill-generator
-description: Generate or update a reusable project-local Figma-to-code Codex skill inside the current repository. Use when the user asks to create, scaffold, refresh, or maintain a project-specific skill that captures UI framework, design-system, code-style, routing, asset, responsive, and verification conventions for future Figma implementation tasks.
+description: Generate or update a reusable project-local Figma-to-code skill/workflow inside the current repository. Use when the user asks to create, scaffold, refresh, or maintain project-specific AI coding assistant instructions that capture UI framework, design-system, code-style, routing, asset, responsive, and verification conventions for future Figma implementation tasks.
 ---
 
 # Figma Project Skill Generator
 
-Create a project-local skill that lets future Codex runs implement Figma designs directly in the current project with the project's own UI framework, code style, assets, routing, responsive rules, and verification commands.
+Create a project-local skill/workflow that lets future AI-agent runs implement Figma designs directly in the current project with the project's own UI framework, code style, assets, routing, responsive rules, and verification commands.
 
 Default output path:
 
@@ -36,7 +36,7 @@ cd "<skill-root>"
 python ".\scripts\generate_project_skill.py" "<project-root>" --force
 ```
 
-`<skill-root>` is the installed `figma-project-skill-generator` skill directory. When Codex runs this skill, resolve `scripts/generate_project_skill.py` relative to this `SKILL.md`; do not hardcode user-specific home paths.
+`<skill-root>` is the installed `figma-project-skill-generator` skill directory. When an agent runs this skill, resolve `scripts/generate_project_skill.py` relative to this `SKILL.md`; do not hardcode user-specific home paths.
 
 Optional flags:
 
