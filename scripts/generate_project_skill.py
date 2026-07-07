@@ -365,13 +365,13 @@ def detect_commands(package_manager: str, scripts: dict[str, str]) -> tuple[str,
         return f"`{package_manager} {name}`"
 
     preferred = []
-    for name in ("dev", "build", "build:check", "typecheck", "lint", "lint:fix", "test", "preview"):
+    for name in ("dev", "build", "build:check", "typecheck", "lint", "test", "preview"):
         if name in scripts:
             preferred.append(run_script(name))
     commands = ", ".join(preferred) if preferred else f"`{package_manager} install` then inspect package scripts"
     dev_server = run_script("dev") if "dev" in scripts else "Use the project's documented dev command."
     static_preferred = []
-    for name in ("typecheck", "build:check", "lint", "lint:fix", "test", "build"):
+    for name in ("typecheck", "build:check", "lint", "test", "build"):
         if name in scripts:
             static_preferred.append(run_script(name))
     static_commands = ", ".join(static_preferred) if static_preferred else "Use the smallest relevant static check from package scripts."
@@ -450,12 +450,12 @@ def render_skill(scan: Scan) -> str:
     route_files = ", ".join(f"`{path}`" for path in scan.route_paths[:8]) if scan.route_paths else "Inspect route/page files before adding navigation."
     return f"""---
 name: figma-to-project
-description: Implement Figma designs directly in this {scan.project_name} project using its UI framework, component library, styling tokens, code conventions, responsive rules, and verification workflow. Use when the user provides a Figma link/node and asks to build, restore, convert, or update a page/component from the design.
+description: Implement Figma designs and review UI/module code directly in this {scan.project_name} project using its UI framework, component library, styling tokens, code conventions, routing, asset, responsive, and verification workflow. Use when the user provides a Figma link/node and asks to build, restore, convert, or update a page/component from the design, or when the user asks to check whether a module/page/component complies with project UI and Figma-to-code conventions.
 ---
 
 # Figma To Project
 
-Use this skill to implement Figma designs as project-native code in `{scan.project_name}`. Do not generate standalone HTML unless the user explicitly asks for an isolated prototype.
+Use this skill to implement Figma designs as project-native code in `{scan.project_name}` and to review existing UI/module code against the same project conventions. Do not generate standalone HTML unless the user explicitly asks for an isolated prototype.
 
 ## Project Conventions
 
@@ -477,7 +477,7 @@ Use this skill to implement Figma designs as project-native code in `{scan.proje
 - Dev server: {scan.dev_server}
 - Dev URL: `{scan.dev_url}`
 
-## Required Workflow
+## Figma Implementation Workflow
 
 1. Read relevant project files before coding:
 {bullet_lines(scan.references)}
@@ -491,6 +491,34 @@ Use this skill to implement Figma designs as project-native code in `{scan.proje
 7. Put pages/components in the detected project directories and respect route/menu ownership boundaries.
 8. Keep changes scoped. Do not touch unrelated dirty files.
 9. Run the smallest useful verification command, then use browser screenshots for desktop and mobile when a page changes.
+
+## Module Compliance Review Workflow
+
+Use this workflow when asked to review an existing module, page, component, or diff for project/Figma-to-code compliance.
+Compliance reviews are read-only by default: report findings without editing files unless the user explicitly asks you to fix the issues.
+
+1. Identify the review target:
+   - files, route, component, feature folder, or git diff range
+   - related Figma node/link when provided
+   - whether the expected output is findings only or fixes are allowed
+2. Read the same project conventions listed above plus the closest existing comparable implementation.
+3. Check project integration:
+   - uses the detected framework, UI library, theme tokens, styling utilities, icon system, and component shells
+   - places pages, components, styles, and assets in the expected directories
+   - respects route/menu ownership and permission boundaries
+   - avoids introducing new UI frameworks, design systems, global styles, or unapproved dependencies
+4. Check Figma/design compliance when a design reference exists:
+   - layout hierarchy, spacing, typography, colors, radii, shadows, imagery, and component states
+   - desktop high-fidelity and tablet/mobile reflow
+   - no fixed full-canvas scaling or viewport-ratio blank bands
+5. Check UI/UX quality gates:
+   - accessibility: labels, alt text, keyboard order, visible focus, contrast
+   - interaction: 44px+ targets where practical, press/focus/disabled/loading states, no hover-only critical actions
+   - forms: semantic inputs, autocomplete/inputmode, inline errors, submit feedback
+   - responsive safety: no horizontal scroll, clipped controls, text overlap, or layout jumps
+   - performance: reserved image dimensions/aspect ratios and no avoidable resize/layout loops
+6. Run or recommend the smallest useful verification command from the project command list.
+7. Report findings first, ordered by severity, with concrete file references. If no issues are found, say so and mention remaining verification gaps.
 
 ## Implementation Rules
 
@@ -532,6 +560,10 @@ Apply `$ui-ux-pro-max` as the generic quality reference when UI is changed:
   - no blank viewport bands caused by fixed frame ratios
   - focus state is visible on form controls and buttons
   - page remains usable in the active project layout
+- Review checks:
+  - findings are grounded in project files and conventions
+  - route/menu/asset/style concerns are separated from visual polish concerns
+  - when fixes are requested, keep patches scoped and reversible
 
 ## Reporting
 
@@ -543,14 +575,22 @@ When finished, report:
 - assets downloaded
 - verification commands and screenshot results
 - any intentional deviations from the Figma design for responsive behavior
+
+For compliance reviews, report:
+
+- findings first, ordered by severity
+- file/line references where available
+- project convention or Figma requirement violated
+- suggested fix or confirmation that no issue was found
+- verification gaps that remain
 """
 
 
 def render_openai_yaml(project_name: str) -> str:
     return f"""interface:
   display_name: "Figma To Project"
-  short_description: "Implement Figma designs in {project_name}."
-  default_prompt: "Use $figma-to-project to implement this Figma URL/node in {project_name} from the project root."
+  short_description: "Implement Figma designs and review UI code in {project_name}."
+  default_prompt: "Use $figma-to-project to implement this Figma URL/node or review this UI module in {project_name} from the project root."
 """
 
 
@@ -559,10 +599,10 @@ def add_agents_pointer(root: Path) -> bool:
     if not path.exists():
         return False
     text = read_text(path)
-    pointer = "For Figma design implementation, use the project skill `figma-to-project`"
+    pointer = "For Figma design implementation or UI/module compliance review, use the project skill `figma-to-project`"
     if pointer in text or "figma-to-project" in text:
         return False
-    addition = "\n\n" + pointer + " and follow project UI framework, component, styling, asset, responsive, and verification conventions.\n"
+    addition = "\n\n" + pointer + " and follow project UI framework, component, styling, asset, routing, responsive, and verification conventions.\n"
     path.write_text(text.rstrip() + addition, encoding="utf-8")
     return True
 

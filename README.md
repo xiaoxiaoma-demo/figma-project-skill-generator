@@ -2,9 +2,9 @@
 
 Language: English | [Chinese](README.zh-CN.md)
 
-Project-local Figma-to-code workflow generator for AI coding assistants.
+Project-local Figma-to-code and UI compliance workflow generator for AI coding assistants.
 
-This repository provides a reusable skill/workflow for AI coding assistants. It scans a JavaScript/TypeScript frontend project and generates a project-specific Figma-to-code workflow file.
+This repository provides a reusable skill/workflow for AI coding assistants. It scans a JavaScript/TypeScript frontend project and generates a project-specific workflow file for both Figma implementation and UI/module compliance review.
 
 Default Codex-compatible output:
 
@@ -12,7 +12,7 @@ Default Codex-compatible output:
 .codex/skills/figma-to-project/SKILL.md
 ```
 
-The generated project workflow helps future AI-agent runs implement Figma designs directly in the target project using that project's real UI framework, route model, components, assets, responsive rules, and verification commands.
+The generated project workflow helps future AI-agent runs implement Figma designs directly in the target project and review existing UI/module code against that project's real UI framework, route model, components, assets, responsive rules, and verification commands.
 
 Although the default output format is Codex-compatible, the scanner and generated Markdown workflow can be adapted to other AI coding assistants by using `--output` and moving the generated instructions into that assistant's rules, memory, or skill system.
 
@@ -28,6 +28,7 @@ When implementing Figma designs, teams usually repeat the same prompt instructio
 - keep layouts responsive
 - run the right project commands
 - verify with screenshots
+- review existing modules against the same project and design conventions
 
 This project turns those repeated instructions into a reusable project-local workflow.
 
@@ -61,7 +62,10 @@ Then restart or reload your assistant's skills/rules if your environment require
 
 ## Daily Usage
 
-Use this generator once per project, or whenever the project stack/routing/UI conventions change.
+Use this generator once per project, or whenever the project stack/routing/UI conventions change. The generated project workflow supports two modes:
+
+- implementation mode: build or update UI from a Figma design node
+- review mode: check whether an existing module/page/component/diff follows project and design conventions
 
 From the installed skill directory:
 
@@ -89,7 +93,7 @@ python ".\scripts\generate_project_skill.py" "<project-root>" --force
 You can ask your AI coding assistant. Codex example:
 
 ```text
-Use $figma-project-skill-generator to scan the current repository and create a project-specific Figma-to-code skill.
+Use $figma-project-skill-generator to scan the current repository and create a project-specific Figma implementation and UI/module compliance workflow.
 ```
 
 After the project skill is generated, use it for implementation:
@@ -97,6 +101,13 @@ After the project skill is generated, use it for implementation:
 ```text
 Use $figma-to-project to implement this Figma page:
 <Figma URL>
+```
+
+Or use it for compliance review:
+
+```text
+Use $figma-to-project to review this UI module against project conventions:
+<files, route, component, or diff>
 ```
 
 ## Scanner Behavior
@@ -119,6 +130,8 @@ It generates:
 <project-root>/.codex/skills/figma-to-project/SKILL.md
 <project-root>/.codex/skills/figma-to-project/agents/openai.yaml
 ```
+
+The generated workflow includes a Figma implementation workflow, a module compliance review workflow, UI/UX quality gates, project verification commands, and reporting rules for both implementation and review tasks.
 
 ## Safety Rules
 
@@ -152,9 +165,9 @@ It generates:
 ```text
 1. Run dry-run.
 2. Review detected project conventions.
-3. Generate the project-local figma-to-project skill.
+3. Generate the project-local figma-to-project workflow.
 4. Manually tighten project-specific route/menu/design-system rules if needed.
-5. Use $figma-to-project for actual Figma implementation tasks.
+5. Use $figma-to-project for Figma implementation tasks or UI/module compliance reviews.
 ```
 
 The generated skill is a strong draft, not a substitute for project knowledge. For mature projects, review route ownership, permission/menu boundaries, cross-repository aliases, UI shell components, and design token rules before relying on it for production page work.

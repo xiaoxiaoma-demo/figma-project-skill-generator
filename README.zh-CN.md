@@ -2,9 +2,9 @@
 
 语言：[English](README.md) | 简体中文
 
-这是一个面向团队复用的通用 Figma-to-code 工作流生成器，适用于支持 rules、memory、skills 或类似机制的 AI 编码助手。默认输出格式兼容 Codex。
+这是一个面向团队复用的通用 Figma-to-code 与 UI 合规校验工作流生成器，适用于支持 rules、memory、skills 或类似机制的 AI 编码助手。默认输出格式兼容 Codex。
 
-它会扫描前端项目的技术栈、UI 框架、路由、组件、资源目录和验证命令，然后在项目内生成专属的 Figma-to-code 工作流说明。后续做 Figma 设计稿还原时，AI 编码助手就能直接按当前项目规范生成代码，而不是每次都重复写一大段提示词。
+它会扫描前端项目的技术栈、UI 框架、路由、组件、资源目录和验证命令，然后在项目内生成专属的 Figma 实现与模块规范校验工作流说明。后续做 Figma 设计稿还原或检查模块代码是否符合项目约定时，AI 编码助手就能直接按当前项目规范工作，而不是每次都重复写一大段提示词。
 
 默认 Codex 兼容输出路径：
 
@@ -12,7 +12,7 @@
 .codex/skills/figma-to-project/SKILL.md
 ```
 
-生成出来的项目 Skill 会固定该项目的真实规范，例如 UI 组件库、样式方案、页面放置位置、路由/菜单边界、Figma 资源下载目录、响应式要求和截图验证方式。
+生成出来的项目 Skill 会固定该项目的真实规范，例如 UI 组件库、样式方案、页面放置位置、路由/菜单边界、Figma 资源下载目录、响应式要求、模块校验规则和截图验证方式。
 
 如果使用的不是 Codex，也可以通过 `--output` 输出 Markdown 草稿，再把生成内容迁移到对应工具的 rules、memory、prompt 或 skill 机制中。
 
@@ -28,8 +28,9 @@
 - 页面必须响应式
 - 运行项目正确的验证命令
 - 用截图检查效果
+- 检查已有模块是否符合项目和设计规范
 
-这个公共工作流的作用就是把这些重复提示词沉淀下来：先生成项目专属规范，再用项目专属规范做实际页面开发。
+这个公共工作流的作用就是把这些重复提示词沉淀下来：先生成项目专属规范，再用项目专属规范做实际页面开发和模块规范校验。
 
 ## 仓库内容
 
@@ -63,8 +64,13 @@ macOS/Linux: ~/.codex/skills/figma-project-skill-generator
 
 这个生成器通常只在两种情况下使用：
 
-- 第一次给某个项目建立 Figma-to-code 规范
+- 第一次给某个项目建立 Figma 实现与 UI/模块合规校验规范
 - 项目技术栈、路由、UI 框架、组件目录、资源目录或命令发生变化，需要刷新规范
+
+生成出来的项目工作流支持两种模式：
+
+- 实现模式：根据 Figma 节点创建或更新页面/组件
+- 校验模式：检查已有模块、页面、组件或 diff 是否符合项目和设计约定
 
 从安装后的 skill 目录运行：
 
@@ -92,7 +98,7 @@ python ".\scripts\generate_project_skill.py" "<project-root>" --force
 可以直接对 AI 编码助手说。Codex 示例：
 
 ```text
-使用 $figma-project-skill-generator 扫描当前项目，并生成项目专属 Figma-to-code skill。
+使用 $figma-project-skill-generator 扫描当前项目，并生成项目专属 Figma 实现与 UI/模块合规校验工作流。
 ```
 
 项目 Skill 生成后，实际做页面时使用：
@@ -102,11 +108,18 @@ python ".\scripts\generate_project_skill.py" "<project-root>" --force
 <Figma URL>
 ```
 
+也可以用来做规范校验：
+
+```text
+使用 $figma-to-project 按项目规范检查这个 UI 模块：
+<文件、路由、组件或 diff>
+```
+
 推荐理解：
 
 ```text
 figma-project-skill-generator = 生成/刷新项目规范
-figma-to-project = 按项目规范实现 Figma 页面
+figma-to-project = 按项目规范实现 Figma 页面或校验模块代码
 ```
 
 ## 扫描器行为
@@ -129,6 +142,8 @@ figma-to-project = 按项目规范实现 Figma 页面
 <project-root>/.codex/skills/figma-to-project/SKILL.md
 <project-root>/.codex/skills/figma-to-project/agents/openai.yaml
 ```
+
+生成的项目工作流会包含 Figma 实现流程、模块合规校验流程、UI/UX 质量门禁、项目验证命令，以及实现和审查两种任务的报告格式。
 
 扫描结果是高质量草稿，不是绝对正确的项目规范。成熟项目建议人工再检查：
 
@@ -181,7 +196,7 @@ figma-to-project = 按项目规范实现 Figma 页面
 2. 检查识别出的技术栈、UI 框架、路由、组件、资源目录和命令是否正确。
 3. 生成项目内 .codex/skills/figma-to-project。
 4. 如有必要，人工补充权限路由、菜单边界、主题 token、页面壳组件等项目特有规则。
-5. 后续用 $figma-to-project 做实际 Figma 页面开发。
+5. 后续用 $figma-to-project 做实际 Figma 页面开发或 UI/模块合规校验。
 ```
 
 生成出来的 skill 是强草稿，不是项目知识的替代品。成熟项目在正式使用前，建议重点检查路由归属、权限/菜单边界、跨仓库 alias、页面壳组件和设计 token 规则。

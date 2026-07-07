@@ -1,11 +1,11 @@
 ---
 name: figma-project-skill-generator
-description: Generate or update a reusable project-local Figma-to-code skill/workflow inside the current repository. Use when the user asks to create, scaffold, refresh, or maintain project-specific AI coding assistant instructions that capture UI framework, design-system, code-style, routing, asset, responsive, and verification conventions for future Figma implementation tasks.
+description: Generate or update a reusable project-local Figma implementation and UI/module compliance workflow inside the current repository. Use when the user asks to create, scaffold, refresh, or maintain project-specific AI coding assistant instructions that capture UI framework, design-system, code-style, routing, asset, responsive, verification, and review conventions.
 ---
 
 # Figma Project Skill Generator
 
-Create a project-local skill/workflow that lets future AI-agent runs implement Figma designs directly in the current project with the project's own UI framework, code style, assets, routing, responsive rules, and verification commands.
+Create a project-local skill/workflow that lets future AI-agent runs implement Figma designs and review UI/module code directly in the current project with the project's own UI framework, code style, assets, routing, responsive rules, verification commands, and review conventions.
 
 Default output path:
 
@@ -84,7 +84,7 @@ The script scans `package.json`, lockfiles, Vite/Next/Nuxt/Vue config, TypeScrip
 7. If the project has an `AGENTS.md`, add a short pointer only when missing:
 
 ```md
-For Figma design implementation, use the project skill `figma-to-project` and follow project UI framework, component, styling, asset, responsive, and verification conventions.
+For Figma design implementation or UI/module compliance review, use the project skill `figma-to-project` and follow project UI framework, component, styling, asset, responsive, verification, and review conventions.
 ```
 
 Do not overwrite unrelated project instructions.
@@ -105,6 +105,8 @@ The generated `figma-to-project` skill must be project-specific. It must include
 - Figma asset download root safety rules
 - responsive rules for desktop/tablet/mobile
 - UI/UX quality gates adapted from `$ui-ux-pro-max`
+- Figma implementation workflow for creating/updating pages from selected design nodes
+- module compliance review workflow for checking existing pages/components/diffs against project conventions
 - commands to run for dev server, lint/build/tests
 - browser screenshot verification expectations
 - concrete dev server URL/port when the project defines one
@@ -131,6 +133,21 @@ The generated project skill must instruct future runs to:
 - avoid blank browser areas, horizontal scroll, text overlap, and clipped controls
 - start the app and verify with desktop and mobile screenshots
 
+## Module Compliance Review Policy To Embed
+
+The generated project skill must also instruct future runs to review existing module/page/component code against the same project conventions:
+
+- identify the review target first: files, route, component, feature folder, or git diff range
+- read closest comparable project implementations before judging style or architecture
+- check whether code uses project UI framework, component shells, theme tokens, styling utilities, icon system, and asset conventions
+- check whether pages/components respect route ownership, permission/menu boundaries, path aliases, and feature ownership
+- check whether Figma/design requirements are met when a design reference is provided
+- check UI/UX quality gates: accessibility, touch targets, responsive safety, form semantics, loading/disabled states, and motion safety
+- check implementation risks: new dependencies, parallel design systems, global style leaks, hardcoded full-canvas scaling, layout shifts, and assets outside the project root
+- report findings first, ordered by severity, with file/line references where available
+- if no issues are found, say so clearly and mention any verification gaps
+- only edit files during review when the user explicitly asks for fixes; otherwise keep review read-only
+
 ## UI/UX Pro Max Integration
 
 When `$ui-ux-pro-max` is installed, use it as the generic UI/UX rule source and keep this skill focused on project-specific generation.
@@ -154,7 +171,7 @@ Use this structure for `.codex/skills/figma-to-project/SKILL.md`:
 ```md
 ---
 name: figma-to-project
-description: Implement Figma designs directly in this project using its UI framework, component library, styling tokens, code conventions, responsive rules, and verification workflow. Use when the user provides a Figma link/node and asks to build, restore, convert, or update a page/component from the design.
+description: Implement Figma designs and review UI/module code directly in this project using its UI framework, component library, styling tokens, code conventions, routing, asset, responsive, and verification workflow. Use when the user provides a Figma link/node and asks to build, restore, convert, or update a page/component from the design, or when the user asks to check whether a module/page/component complies with project UI and Figma-to-code conventions.
 ---
 
 # Figma To Project
@@ -174,7 +191,7 @@ description: Implement Figma designs directly in this project using its UI frame
 - Assets:
 - Commands:
 
-## Required Workflow
+## Figma Implementation Workflow
 
 1. Read project guidance and relevant existing code.
 2. Use Figma MCP to read or generate from the exact selected node/frame. With F2C MCP Plugin, confirm the target layer is selected in the F2C Chrome extension workflow, then call `mcp__F2C_MCP.get_code_to_component`.
@@ -184,6 +201,19 @@ description: Implement Figma designs directly in this project using its UI frame
 6. Apply responsive behavior with project-native patterns.
 7. Run the dev server/build/lint/test commands that fit the change.
 8. Capture desktop and mobile screenshots, compare against Figma, and iterate.
+
+## Module Compliance Review Workflow
+
+Compliance reviews are read-only by default: report findings without editing files unless the user explicitly asks you to fix the issues.
+
+1. Identify the review target: files, route, component, feature folder, or git diff range.
+2. Read project guidance, relevant existing code, and the closest comparable implementation.
+3. Check project integration: framework, UI library, tokens, styling utilities, component shells, icons, assets, routes, aliases, and permission/menu boundaries.
+4. Check Figma/design compliance when a design reference exists.
+5. Check UI/UX quality gates for accessibility, touch targets, responsive safety, form UX, motion, and visual consistency.
+6. Run or recommend the smallest useful verification command.
+7. Report findings first, ordered by severity, with file/line references where available.
+8. If no issues are found, say so and mention remaining verification gaps.
 
 ## Implementation Rules
 
@@ -211,6 +241,7 @@ description: Implement Figma designs directly in this project using its UI frame
   - keyboard focus is visible
   - form inputs have semantic labels/autocomplete where applicable
   - responsive screenshots at project-relevant breakpoints
+  - module compliance review findings are grounded in project conventions and concrete files
 ```
 
 Fill every placeholder from the actual project. Remove lines that do not apply.
