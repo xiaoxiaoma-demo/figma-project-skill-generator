@@ -96,6 +96,7 @@ The generated `figma-to-project` skill must be project-specific. It must include
 - exact project stack and UI framework
 - directories to inspect before coding
 - components/tokens/helpers to prefer
+- styling priority rules: when the project already uses visual atomic/utility-first classes, prefer those utilities and project shortcuts for new page/component layout and common visual styling; use scoped styles as a complementary tool for deep component overrides, complex selectors, media queries, dynamic CSS, or effects that are awkward in utilities
 - where to put pages, components, styles, and assets
 - how to call Figma MCP with concrete tool names when available
 - how to translate Figma values into project-native code
@@ -221,6 +222,7 @@ Compliance reviews are read-only by default: report findings without editing fil
 - Do not introduce new UI libraries unless explicitly approved.
 - Do not create a parallel design system.
 - Prefer existing components/tokens/helpers.
+- When the target project already uses visual atomic/utility-first classes, prefer those utilities and project shortcuts for new layout, spacing, color, typography, radius, and common state styling. Do not make atomic classes mandatory: scoped styles remain appropriate for third-party component deep overrides, complex selectors, media queries, dynamic values, and one-off effects that are clearer outside utility classes.
 - Keep changes scoped and reversible.
 - Desktop should closely match Figma.
 - Mobile/tablet may reflow but must preserve hierarchy.

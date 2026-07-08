@@ -524,6 +524,7 @@ Compliance reviews are read-only by default: report findings without editing fil
 
 - Do not introduce a new UI library, CSS framework, or icon system without explicit approval.
 - Do not create a parallel design system. Prefer existing components, theme variables, and project styling utilities.
+- If this project already uses visual atomic/utility-first classes, prefer those utilities and project shortcuts for new page/component layout, spacing, color, typography, radius, and common state styling. Do not make atomic classes mandatory: scoped styles remain appropriate for third-party component deep overrides, complex selectors, media queries, dynamic values, and one-off effects that are clearer outside utility classes.
 - Do not convert Figma into fixed full-canvas scaling such as `transform: scale(...)` on a 1920px design.
 - Desktop should closely match the Figma design; tablet/mobile may reflow while preserving hierarchy, brand, and core interactions.
 - Use responsive grid/flex utilities, `max-width`, percentages, `clamp()`, and project breakpoints instead of fixed viewport assumptions.
@@ -532,7 +533,7 @@ Compliance reviews are read-only by default: report findings without editing fil
 - Keep click/touch targets at least 44px high where practical.
 - Preserve semantic form behavior: visible labels or accessible labels, autocomplete/inputmode, loading states, and inline validation/messages where applicable.
 - Use meaningful alt text for content images; decorative icons/images can use empty alt.
-- Use component-scoped or feature-local styles only for design-specific effects that are awkward in project utilities.
+- Use component-scoped or feature-local styles as a complement to project utilities for design-specific effects that are awkward in utility classes.
 
 ## UI/UX Quality Gates
 
