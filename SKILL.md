@@ -97,6 +97,7 @@ The generated `figma-to-project` skill must be project-specific. It must include
 - directories to inspect before coding
 - components/tokens/helpers to prefer
 - styling priority rules: when the project already uses visual atomic/utility-first classes, prefer those utilities and project shortcuts for new page/component layout and common visual styling; use scoped styles as a complementary tool for deep component overrides, complex selectors, media queries, dynamic CSS, or effects that are awkward in utilities
+- componentization rules that preserve page cohesion: treat size and visual sections as signals rather than split triggers; extract only clear feature-local boundaries whose readability, ownership, or verification benefit outweighs prop/state coordination cost; promote to shared only for demonstrated cross-feature reuse or an existing shared project pattern
 - where to put pages, components, styles, and assets
 - how to call Figma MCP with concrete tool names when available
 - how to translate Figma values into project-native code
@@ -229,6 +230,34 @@ Compliance reviews are read-only by default: report findings without editing fil
 - No horizontal scroll, clipped controls, blank viewport bands, or text overlap.
 - Apply `$ui-ux-pro-max` quality gates for accessibility, touch targets, responsive layout, form UX, motion, and visual consistency when UI is changed.
 - Prefer project-native responsive utilities over raw viewport hacks.
+
+## Componentization Rules
+
+For large Figma pages, plan the page structure before coding, but do not split into separate files by size alone. Prefer a slightly larger but coherent page over many thin wrapper components.
+
+Start with a page-level composition. Extract a section into a feature-local component only when the boundary is clear and extraction makes the result easier to understand, maintain, or verify.
+
+A section is a good extraction candidate when several of these are true:
+
+- it represents a stable product/domain concept rather than a purely visual wrapper
+- it has substantial markup or configuration and can be understood as a self-contained region
+- it owns mostly local UI behavior or view state, such as expand/collapse, local filters, local validation, dialog visibility, local loading, or region-specific empty/error display
+- the same structure or configuration repeats enough that keeping it inline harms readability
+- the section can be reviewed, tested, or iterated on with limited impact on the rest of the page
+
+Do not extract a separate component when any of these are true:
+
+- it would only wrap a small amount of mostly static markup
+- the extracted boundary is visual only and has no clear product meaning
+- the parent would need to pass many small props, callbacks, or intermediate derived values just to preserve the split
+- the section depends heavily on surrounding page context and would be harder to read once separated
+- nearby project implementations keep the same pattern inline and that convention still reads well
+
+Keep page-level orchestration in the page, including route context, top-level query state, cross-section coordination, primary data loading, and overall composition. Keep region-local display or interaction state in a justified feature-local component. Extract shared stateful logic only when it is reused, independently testable, or materially simplifies the page.
+
+Keep one-off sections inline by default. When extraction is justified, place the component next to the page as feature-local code. Promote it to a shared/common location only when it is already reused across features or clearly matches an existing shared project pattern; possible future reuse is not enough. For repeated patterns, prefer local configuration, local render helpers, or a feature-local component before introducing a shared abstraction.
+
+For large pages, build and verify section by section, but treat implementation sequencing and file splitting as separate decisions: not every section needs its own file.
 
 ## Verification
 
